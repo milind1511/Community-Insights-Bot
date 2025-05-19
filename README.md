@@ -10,8 +10,8 @@ This bot is designed to help product managers and developers quickly understand 
   - Sentiment (Positive, Negative, Neutral)
   - Feature area
 - 🗂️ Presents insights as Adaptive Cards in Teams
-- 💬 Supports questions like:
-  - `"pain points"`
+- 💬 Supports prompts like:
+  - `"List all"`
   - `"show me positive feedback"`
   - `"what percentage of feedback is neutral?"`
 
@@ -156,7 +156,7 @@ Download and install from the official Microsoft site:
 
 Try these messages in the emulator:
 
-- `pain points`
+- `start analysis`
 - `show me positive feedback`
 - `what is the percentage of neutral feedback?`
 

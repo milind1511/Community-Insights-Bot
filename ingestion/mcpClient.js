@@ -3,7 +3,7 @@ const { response } = require("express");
 
 async function fetchStackOverflow() {
   const questions = [];
-  const pageSize = 1;
+  const pageSize = 5;
   let page = 1;
   let hasMore = true;
 
@@ -12,11 +12,12 @@ async function fetchStackOverflow() {
     {
       params: {
         site: "stackoverflow",
-        tagged: "microsoftteams",
+        tagged: "microsoft-teams",
         pagesize: pageSize,
         page,
         order: "desc",
         sort: "creation",
+        filter: "withbody",
       },
     }
   );
@@ -39,7 +40,7 @@ async function fetchGitHubIssues(repo = "microsoftdocs/msteams-docs") {
         page,
       },
       headers: {
-        Authorization: `token ${process.env.GITHUB_TOKEN}`, // optional, but needed for higher rate limits
+        Authorization: `token ${process.env.GITHUB_TOKEN}`, 
       },
     }
   );
