@@ -132,6 +132,8 @@ The bot should now be running on:
 http://localhost/api/messages
 ```
 
+#### For Dockerized Setup, Checkout [this](https://github.com/milind1511/Community-Insights-Bot/blob/main/DOCKER-README.md)
+
 # 🧪 Testing Locally with Bot Framework Emulator
 
 ### 📥 Step 1: Install the Bot Framework Emulator
