@@ -1,9 +1,11 @@
 const { fetchStackOverflow, fetchGitHubIssues } = require('./mcpClient');
 
 async function ingestFeedback() {
-  const so = await fetchStackOverflow();
-  const gh = await fetchGitHubIssues();
-  return [...so, ...gh];
+  const [gh] = await Promise.all([
+    //fetchStackOverflow(),
+    fetchGitHubIssues()
+  ]);
+  return [ ...gh ];
 }
 
 module.exports = { ingestFeedback };

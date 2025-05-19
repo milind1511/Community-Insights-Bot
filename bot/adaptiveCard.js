@@ -13,7 +13,12 @@ function createInsightsCard(title, painPoint = {}) {
       },
       {
         type: 'TextBlock',
-        text: `**Pain Point:** ${painPoint?.pain_point_summary || 'N/A'}`,
+        text: `**Source:** ${painPoint?.source || 'N/A'}`,
+        wrap: true
+      },
+      {
+        type: 'TextBlock',
+        text: `**Pain Point:** ${painPoint?.painPoint || 'N/A'}`,
         wrap: true
       },
       {
@@ -23,7 +28,7 @@ function createInsightsCard(title, painPoint = {}) {
       },
       {
         type: 'TextBlock',
-        text: `**Feature Area:** ${painPoint?.feature_area || 'N/A'}`,
+        text: `**Feature Area:** ${painPoint?.featureArea || 'N/A'}`,
         wrap: true
       }
     ]

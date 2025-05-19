@@ -1,4 +1,3 @@
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const { ingestFeedback } = require("../ingestion/mcpServer");
@@ -22,7 +21,11 @@ const adapter = new BotFrameworkAdapter({
   appPassword: process.env.MICROSOFT_APP_PASSWORD || "",
 });
 
-async function extractValidInsight(feedback, timeoutMs = 5 * 60 * 1000, delayMs = 1000) {
+async function extractValidInsight(
+  feedback,
+  timeoutMs = 5 * 60 * 1000,
+  delayMs = 1000
+) {
   const start = Date.now();
   let attempt = 0;
 
@@ -33,6 +36,7 @@ async function extractValidInsight(feedback, timeoutMs = 5 * 60 * 1000, delayMs 
         painPoint: obj.pain_point_summary,
         sentiment: obj.sentiment,
         featureArea: obj.feature_area,
+        source: obj.source
       };
     } catch (err) {
       return null;
@@ -59,87 +63,16 @@ async function extractValidInsight(feedback, timeoutMs = 5 * 60 * 1000, delayMs 
       }
     }
 
-    console.warn(`⏳ Attempt ${attempt}: Invalid result -`, JSON.stringify(rawResult, null, 2));
+    console.warn(
+      `⏳ Attempt ${attempt}: Invalid result -`,
+      JSON.stringify(rawResult, null, 2)
+    );
     await new Promise((resolve) => setTimeout(resolve, delayMs));
   }
 
   console.error("⛔ Timed out after 5 minutes without a valid insight.");
   return null;
 }
-
-/* class LocalBot extends ActivityHandler {
-  constructor() {
-    super();
-
-    this.onMessage(async (context, next) => {
-      const text = context.activity.text?.toLowerCase();
-
-      if (text.includes("pain points")) {
-        await context.sendActivities([
-          { type: "typing" },
-          { type: "delay", value: 1000 },
-          { type: "message", text: "🔎 Great! I'm gathering recent community feedback for analysis..." }
-        ]);
-
-        try {
-          const feedbacks = await ingestFeedback();
-          const insights = [];
-
-          for (let i = 0; i < feedbacks.length; i++) {
-            await context.sendActivities([
-              { type: "typing" },
-              { type: "delay", value: 800 },
-              {
-                type: "message",
-                text: `🧠 Analyzing feedback ${i + 1} of ${feedbacks.length}...`,
-              },
-            ]);
-
-            const result = await extractValidInsight(feedbacks[i]);
-
-            if (result?.insight) {
-              insights.push({ ...result.insight, attempts: result.attempts });
-            } else {
-              await context.sendActivity(`⚠️ I couldn’t extract insight from feedback ${i + 1}. Skipping it.`);
-            }
-          }
-
-          if (insights.length === 0) {
-            await context.sendActivity("😔 Sorry, I couldn't extract any valid insights this time. Try again later.");
-            return;
-          }
-
-          const cards = insights.map((insight, i) => {
-            const card = createInsightsCard(`Insight ${i + 1}`, insight);
-            card.body.push({
-              type: "TextBlock",
-              text: `🌀 Extracted after ${insight.attempts} attempt(s)`,
-              isSubtle: true,
-              size: "Small",
-            });
-            return CardFactory.adaptiveCard(card);
-          });
-
-          await context.sendActivity({
-            type: "message",
-            attachments: cards,
-          });
-
-          await context.sendActivity("✅ Here are the top insights I discovered. Let me know if you'd like to explore more!");
-        } catch (error) {
-          console.error("❌ Error processing insights:", error);
-          await context.sendActivity("⚠️ Something went wrong while processing the insights. Please try again shortly.");
-        }
-      } else {
-        await context.sendActivity(
-          '👋 Hi there! You can ask me to analyze recent feedback by typing **"pain points"**.'
-        );
-      }
-
-      await next();
-    });
-  }
-} */
 
 class LocalBot extends ActivityHandler {
   constructor() {
@@ -153,94 +86,135 @@ class LocalBot extends ActivityHandler {
         await context.sendActivities([
           { type: "typing" },
           { type: "delay", value: 1000 },
-          { type: "message", text: "🔍 Gathering recent feedback for analysis..." }
+          {
+            type: "message",
+            text: "🔍 Gathering recent feedback for analysis...",
+          },
         ]);
 
         try {
           const feedbacks = await ingestFeedback();
           const insights = [];
 
-          for (let i = 0; i < feedbacks.length; i++) {
+          for (let i = 0; i < 5; i++) {
             await context.sendActivities([
               { type: "typing" },
               { type: "delay", value: 800 },
               {
                 type: "message",
-                text: `🧠 Analyzing feedback ${i + 1} of ${feedbacks.length}...`,
+                text: `🧠 Analyzing feedback ${i + 1} of ${
+                  feedbacks.length
+                }...`,
+              },
+              {
+                type: "message",
+                text: `⏳ Progress: ${Math.round(
+                  ((i + 1) / feedbacks.length) * 100
+                )}%`,
               },
             ]);
 
             const result = await extractValidInsight(feedbacks[i]);
             if (result?.insight) {
-              insights.push({ ...result.insight, attempts: result.attempts });
+              insights.push({
+                ...result.insight,
+                attempts: result.attempts,
+                original: feedbacks[i],
+              });
             }
           }
 
           if (insights.length === 0) {
-            await context.sendActivity("😞 Sorry, I couldn't extract any insights this time.");
-            return;
+            await context.sendActivity(
+              "😞 Sorry, I couldn't extract any insights this time."
+            );
           }
 
-          // Save insights for future questions
           this.insights = insights;
 
-          // Show cards
-          const cards = insights.map((insight, i) => {
-            const card = createInsightsCard(`Insight ${i + 1}`, insight);
-            card.body.push({
-              type: "TextBlock",
-              text: `🌀 Extracted after ${insight.attempts} attempt(s)`,
-              isSubtle: true,
-              size: "Small",
-            });
+          const cards = feedbacks.map((feedback, index) => {
+            const matchingInsight = insights.find(
+              (ins) => ins.original === feedback
+            );
+            console.log("Matching Insight:", matchingInsight);
+            const card = createInsightsCard(
+              `Feedback ${index + 1}`,
+              matchingInsight ?? {
+                painPoint: "❌ No insight extracted",
+                sentiment: "N/A",
+                featureArea: "N/A",
+              }
+            );
+            if (matchingInsight) {
+              card.body.push({
+                type: "TextBlock",
+                text: `🌀 Extracted after ${matchingInsight.attempts} attempt(s)`,
+                isSubtle: true,
+                size: "Small",
+              });
+            }
             return CardFactory.adaptiveCard(card);
           });
 
-          await context.sendActivity({
-            type: "message",
-            attachments: cards,
-          });
+          await context.sendActivity({ type: "message", attachments: cards });
 
-          await context.sendActivity("✅ Done! You can now ask me questions like:\n- 'What percentage is neutral?'\n- 'How many positive pain points?'\n- 'Show me negative feedback'.");
+          await context.sendActivity(
+            "✅ Done! You can now ask me questions like:\n- 'What percentage is neutral?'\n- 'How many positive pain points?'\n- 'Show me negative feedback'."
+          );
         } catch (err) {
           console.error(err);
-          await context.sendActivity("❌ Something went wrong while processing.");
+          await context.sendActivity(
+            "❌ Something went wrong while processing."
+          );
         }
       }
 
-      // Respond to analytical questions
+      // Handle user queries about extracted insights
       else if (this.insights.length > 0) {
         const total = this.insights.length;
         const sentimentMatch = /(positive|neutral|negative)/.exec(userText);
         if (sentimentMatch) {
           const sentiment = sentimentMatch[1];
-          const count = this.insights.filter(i => i.sentiment.toLowerCase() === sentiment).length;
+          const count = this.insights.filter(
+            (i) => i.sentiment.toLowerCase() === sentiment
+          ).length;
           const percentage = ((count / total) * 100).toFixed(1);
-          await context.sendActivity(`📊 ${sentiment.charAt(0).toUpperCase() + sentiment.slice(1)} feedback: ${count}/${total} (${percentage}%)`);
+          await context.sendActivity(
+            `📊 ${
+              sentiment.charAt(0).toUpperCase() + sentiment.slice(1)
+            } feedback: ${count}/${total} (${percentage}%)`
+          );
         } else if (userText.includes("show") || userText.includes("list")) {
-          const filtered = this.insights.filter(i => i.sentiment.toLowerCase() === "negative");
+          const filtered = this.insights.filter(
+            (i) => i.sentiment.toLowerCase() === "negative"
+          );
           if (filtered.length > 0) {
-            await context.sendActivity(`📌 Here are some negative pain points:`);
+            await context.sendActivity(
+              `📌 Here are some negative pain points:`
+            );
             for (const i of filtered.slice(0, 5)) {
-              await context.sendActivity(`• ${i.painPoint} (Feature: ${i.featureArea})`);
+              await context.sendActivity(
+                `• ${i.painPoint} (Feature: ${i.featureArea})`
+              );
             }
           } else {
             await context.sendActivity("🤷 No matching pain points found.");
           }
         } else {
-          await context.sendActivity("❓ You can ask things like:\n- 'What percent is neutral?'\n- 'Show me positive feedback'.");
+          await context.sendActivity(
+            "❓ You can ask things like:\n- 'What percent is neutral?'\n- 'Show me positive feedback'."
+          );
         }
-      }
-
-      else {
-        await context.sendActivity("👋 Hi! You can type **'pain points'** to begin, and ask me questions after that.");
+      } else {
+        await context.sendActivity(
+          "👋 Hi! You can type **'pain points'** to begin, and ask me questions after that."
+        );
       }
 
       await next();
     });
   }
 }
-
 
 const bot = new LocalBot();
 

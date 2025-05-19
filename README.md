@@ -83,7 +83,7 @@ After insights are stored in memory, users can ask:
 | ------------------------ | ------------------------------------ |
 | `MICROSOFT_APP_ID`       | Azure Bot App ID                     |
 | `MICROSOFT_APP_PASSWORD` | Azure Bot Password                   |
-| `OPENROUTER_API_KEY`     | OpenRouter API Key (for LLM queries) |
+| `QWEN_API_KEY`           | OpenRouter API Key (for LLM queries) |
 | `PORT`                   | Optional. Defaults to `3000`         |
 
 ## 🚀 Getting Started
@@ -112,11 +112,11 @@ Fill in your credentials:
 ```bash
 MICROSOFT_APP_ID=your-bot-app-id
 MICROSOFT_APP_PASSWORD=your-bot-password
-OPENROUTER_API_KEY=your-openrouter-api-key
+QWEN_API_KEY=your-openrouter-api-key
 PORT=80
 ```
 
-You can get the `MICROSOFT_APP_ID` and `MICROSOFT_APP_PASSWORD` by registering your bot in the Azure portal. The `OPENROUTER_API_KEY` can be obtained from [OpenRouter](https://openrouter.ai/). The `PORT` is the port on which your bot will run. You can change it if needed but make sure to update the bot's messaging endpoint accordingly.
+You can get the `MICROSOFT_APP_ID` and `MICROSOFT_APP_PASSWORD` by registering your bot in the Azure portal. The `QWEN_API_KEY` can be obtained from [OpenRouter](https://openrouter.ai/). The `PORT` is the port on which your bot will run. You can change it if needed but make sure to update the bot's messaging endpoint accordingly.
 
 Leave `MICROSOFT_APP_ID` and `MICROSOFT_APP_PASSWORD` blank if you are testing locally without Azure Bot Service.
 

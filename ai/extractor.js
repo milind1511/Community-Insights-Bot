@@ -15,8 +15,10 @@ Given a piece of feedback from Stack Overflow or GitHub Issues, perform the foll
 1. Identify and summarize the **primary pain point** described.
 2. Classify the **sentiment** as one of: Positive, Negative, or Neutral.
 3. Determine the **feature or area** being discussed (e.g., Teams SDK, Bots, Adaptive Cards, Authentication, TeamsFX).
+4. Only include the relevant feedback.
 
 {
+  "source": "<StackOverflow | GitHub>",
   "pain_point_summary": "<summary>",
   "sentiment": "<Positive | Negative | Neutral>",
   "feature_area": "<Teams SDK | Bots | Adaptive Cards | Authentication | TeamsFX | Other>"
@@ -42,14 +44,13 @@ ${feedback}
     });
 
     const choice = completion?.choices?.[0]?.message?.content;
-
+  
     if (!choice) {
       console.error("No valid response from OpenRouter AI:", completion);
       return null;
     }
 
-    console.log(choice);
-    return choice;
+   return choice;
 
   } catch (error) {
     console.error("Error calling OpenRouter API:", error.response?.data || error.message);
