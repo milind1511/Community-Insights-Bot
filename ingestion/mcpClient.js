@@ -3,7 +3,7 @@ const { response } = require("express");
 
 async function fetchStackOverflow() {
   const questions = [];
-  const pageSize = 1;
+  const pageSize = 5;
   let page = 1;
   let hasMore = true;
 

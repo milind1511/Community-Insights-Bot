@@ -2,7 +2,7 @@ const { fetchStackOverflow, fetchGitHubIssues } = require('./mcpClient');
 
 async function ingestFeedback() {
   const [gh] = await Promise.all([
-    //fetchStackOverflow(),
+   // fetchStackOverflow(),
     fetchGitHubIssues()
   ]);
   return [ ...gh ];
