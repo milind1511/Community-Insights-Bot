@@ -1,0 +1,32 @@
+{
+  "name": "community-insider",
+  "version": "1.0.0",
+  "description": "Teams app to extract developer pain points from community forums using AI",
+  "main": "bot/app.js",
+  "scripts": {
+    "start": "node bot/app.js"
+  },
+  "keywords": [
+    "teams",
+    "ai",
+    "feedback",
+    "bot",
+    "mcp",
+    "qwen"
+  ],
+  "author": "Milind Sardana",
+  "license": "MIT",
+  "dependencies": {
+    "@microsoft/teams-ai": "^1.7.4",
+    "axios": "^1.6.0",
+    "body-parser": "^1.20.2",
+    "botbuilder": "^4.23.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "openai": "^4.77.4"
+  },
+  "devDependencies": {
+    "env-cmd": "latest",
+    "nodemon": "^3.0.1"
+  }
+}
