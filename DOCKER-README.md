@@ -50,7 +50,7 @@ Download and install from the official Microsoft site:
 
 Try these messages in the emulator:
 
-- `pain points`
+- `start analysis`
 - `show me positive feedback`
 - `what is the percentage of neutral feedback?`
 
