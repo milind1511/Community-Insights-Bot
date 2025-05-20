@@ -63,9 +63,8 @@ After insights are stored in memory, users can ask:
 
 | Query Example                    | What it does                          |
 | -------------------------------- | ------------------------------------- |
-| `pain points`                    | Ingests & extracts insights           |
 | `how many are negative`          | Counts negative insights              |
-| `show me positive pain points`   | Lists positive insights               |
+| `show me positive feedback`      | list positive  insights               |
 | `percentage of neutral feedback` | Calculates neutral insight percentage |
 | `show all feature areas`         | Groups insights by feature area       |
 
