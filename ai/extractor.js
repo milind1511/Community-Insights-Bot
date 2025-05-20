@@ -1,11 +1,14 @@
-import { OpenAI } from "openai";
+import { AzureOpenAI } from "openai";
 import dotenv from "dotenv";
 dotenv.config();
 
-const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.QWEN_API_KEY,
+const openai = new AzureOpenAI({
+  endpoint: "https://community-insights-resource.cognitiveservices.azure.com/",
+  apiKey: process.env.API_KEY,
+  apiVersion: "2024-04-01-preview",
+  deployment: "gpt-4.1-mini"
 });
+const modelName = "gpt-4.1-mini";
 
 async function extractPainPoints(feedback) {
   const prompt = `
@@ -15,7 +18,7 @@ Given a piece of feedback from Stack Overflow or GitHub Issues, perform the foll
 1. Identify and summarize the **primary pain point** described.
 2. Classify the **sentiment** as one of: Positive, Negative, or Neutral.
 3. Determine the **feature or area** being discussed (e.g., Teams SDK, Bots, Adaptive Cards, Authentication, TeamsFX).
-4. Only include the relevant feedback.
+4. Only provide the relevant & valid data.
 
 {
   "source": "<StackOverflow | GitHub>",
@@ -34,31 +37,35 @@ ${feedback}
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "qwen/qwen3-30b-a3b:free",
       messages: [
         {
-          role: "user",
+          role: "system",
           content: prompt,
         },
       ],
+      max_completion_tokens: 800,
+      temperature: 1,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+      model: modelName
     });
 
     const choice = completion?.choices?.[0]?.message?.content;
-  
+
     if (!choice) {
-      console.error("No valid response from OpenRouter AI:", completion);
+      console.error("No valid response from AzureOpenAI AI:", completion);
       return null;
     }
 
-   return choice;
-
+    return choice;
   } catch (error) {
-    console.error("Error calling OpenRouter API:", error.response?.data || error.message);
+    console.error(
+      "Error calling AzureOpenAI API:",
+      error.response?.data || error.message
+    );
     return null;
   }
 }
 
 export { extractPainPoints };
-
-
-

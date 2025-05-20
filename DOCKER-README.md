@@ -11,7 +11,7 @@ This guide will help you build and run your Microsoft Teams Community Insights B
 ```env
 MICROSOFT_APP_ID=
 MICROSOFT_APP_PASSWORD=
-QWEN_API_KEY=your_openrouter_or_qwen_api_key
+API_KEY=your_openrouter_or_qwen_api_key
 PORT=80
 ```
 

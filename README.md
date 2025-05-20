@@ -1,11 +1,11 @@
-# 🤖 Community Insights Bot (Teams AI + OpenRouter + MCP)
+# 🤖 Community Insights Bot (Teams AI + AzureOpenAI + MCP)
 
-A Microsoft Teams bot that ingests developer feedback (e.g., from GitHub, Stack Overflow), extracts pain points using an OpenRouter LLM (e.g., Qwen), and responds to user queries using Adaptive Cards and natural language.
+A Microsoft Teams bot that ingests developer feedback (e.g., from GitHub, Stack Overflow), extracts pain points using an AzureOpenAI LLM (e.g., GPT 4.1 mini), and responds to user queries using Adaptive Cards and natural language.
 This bot is designed to help product managers and developers quickly understand community sentiment and feature requests, making it easier to prioritize development efforts.
 
 ## 📦 Features
 
-- 🧠 Uses OpenRouter's LLM (e.g., Qwen) to extract:
+- 🧠 Uses AzureOpenAI's LLM (e.g., GPT 4.1 mini) to extract:
   - Pain point summary
   - Sentiment (Positive, Negative, Neutral)
   - Feature area
@@ -22,7 +22,7 @@ This bot is designed to help product managers and developers quickly understand 
 ├── ingestion/
 │   └── mcpServer.js        # Simulated ingestion of feedback
 ├── ai/
-│   └── extractor.js        # LLM interaction via OpenRouter
+│   └── extractor.js        # LLM interaction via AzureOpenAI
 ├── cards/
 │   └── adaptiveCard.js     # Adaptive Card generator
 ├── index.js                # Express server and bot handler
@@ -49,7 +49,7 @@ By default, the function fetches only the first 5 feedback items from each sourc
 
 ## 🤖 LLM Extraction
 
-The extractPainPoints() function sends developer feedback to an OpenRouter-compatible endpoint (e.g., Qwen or GPT) and expects structured output like:
+The extractPainPoints() function sends developer feedback to an AzureOpenAI-compatible endpoint (e.g., GPT 4.1 mini or GPT) and expects structured output like:
 
 
 ```json
@@ -86,7 +86,7 @@ After insights are stored in memory, users can ask:
 | ------------------------ | ------------------------------------ |
 | `MICROSOFT_APP_ID`       | Azure Bot App ID                     |
 | `MICROSOFT_APP_PASSWORD` | Azure Bot Password                   |
-| `QWEN_API_KEY`           | OpenRouter API Key (for LLM queries) |
+| `API_KEY`                | AzureOpenAI API Key (for LLM queries)|
 | `PORT`                   | Optional. Defaults to `3000`         |
 
 ## 🚀 Getting Started
@@ -115,11 +115,11 @@ Fill in your credentials:
 ```bash
 MICROSOFT_APP_ID=your-bot-app-id
 MICROSOFT_APP_PASSWORD=your-bot-password
-QWEN_API_KEY=your-openrouter-api-key
+API_KEY=your-AzureOpenAI-api-key
 PORT=80
 ```
 
-You can get the `MICROSOFT_APP_ID` and `MICROSOFT_APP_PASSWORD` by registering your bot in the Azure portal. The `QWEN_API_KEY` can be obtained from [OpenRouter](https://openrouter.ai/). The `PORT` is the port on which your bot will run. You can change it if needed but make sure to update the bot's messaging endpoint accordingly.
+You can get the `MICROSOFT_APP_ID` and `MICROSOFT_APP_PASSWORD` by registering your bot in the Azure portal. The `API_KEY` can be obtained from [AzureOpenAI](https://ai.azure.com/). The `PORT` is the port on which your bot will run. You can change it if needed but make sure to update the bot's messaging endpoint accordingly.
 
 Leave `MICROSOFT_APP_ID` and `MICROSOFT_APP_PASSWORD` blank if you are testing locally without Azure Bot Service.
 

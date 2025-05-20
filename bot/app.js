@@ -74,7 +74,7 @@ const adapter = new BotFrameworkAdapter({
 
 async function extractValidInsight(
   feedback,
-  timeoutMs = 5 * 60 * 1000,
+  timeoutMs = 0.5 * 60 * 1000,
   delayMs = 1000
 ) {
   const start = Date.now();
@@ -121,7 +121,7 @@ async function extractValidInsight(
     await new Promise((resolve) => setTimeout(resolve, delayMs));
   }
 
-  console.error("⛔ Timed out after 5 minutes without a valid insight.");
+  console.error("⛔ Timed out after 30 seconds without a valid insight.");
   return null;
 }
 
@@ -216,7 +216,7 @@ class LocalBot extends ActivityHandler {
         if (userText.includes("show all") || userText.includes("list all")) {
           const cards = generateCardsFromInsights(this.insights);
           await context.sendActivity("📋 Showing all extracted feedback:");
-          for (const card of cards.slice(0, 10)) {
+          for (const card of cards.slice(0, this.insights.length)) {
             await context.sendActivity({ attachments: [card] });
           }
         } else if (
@@ -230,7 +230,7 @@ class LocalBot extends ActivityHandler {
           if (filtered.length > 0) {
             const cards = generateCardsFromInsights(filtered);
             await context.sendActivity(`📋 Showing ${sentiment} feedback:`);
-            for (const card of cards.slice(0, 10)) {
+            for (const card of cards.slice(0, this.insights.length)) {
               await context.sendActivity({ attachments: [card] });
             }
           } else {
