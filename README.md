@@ -43,9 +43,14 @@ The ingestFeedback() method is currently a placeholder returning static/mock fee
 
 - Azure DevOps feedback API
 
+```text 
+By default, the function fetches only the first 5 feedback items from each source (Stack Overflow and GitHub). 
+```
+
 ## 🤖 LLM Extraction
 
 The extractPainPoints() function sends developer feedback to an OpenRouter-compatible endpoint (e.g., Qwen or GPT) and expects structured output like:
+
 
 ```json
 {
@@ -66,7 +71,6 @@ After insights are stored in memory, users can ask:
 | `how many are negative`          | Counts negative insights              |
 | `show me positive feedback`      | list positive  insights               |
 | `percentage of neutral feedback` | Calculates neutral insight percentage |
-| `show all feature areas`         | Groups insights by feature area       |
 
 ## ✅ Requirements
 
