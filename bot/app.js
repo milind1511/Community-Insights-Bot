@@ -129,12 +129,19 @@ class LocalBot extends ActivityHandler {
   constructor() {
     super();
     this.insights = [];
+    this.lastFeedbacks = [];
+    this.lastFeedbackIndex = 0;
 
     this.onMessage(async (context, next) => {
       const userText = context.activity.text?.toLowerCase().trim();
 
-      if (userText.includes("start analysis")) {
-        progressActivityId = null; 
+      // Start or restart analysis
+      if (
+        userText.includes("start analysis") ||
+        userText.includes("next analysis") ||
+        userText.includes("analyze next")
+      ) {
+        progressActivityId = null;
         progressConversationReference = TurnContext.getConversationReference(
           context.activity
         );
@@ -144,15 +151,20 @@ class LocalBot extends ActivityHandler {
           { type: "delay", value: 1000 },
           {
             type: "message",
-            text: "🔍 Gathering recent feedback for analysis...",
+            text: userText.includes("next")
+              ? "🔄 Analyzing next set of feedback..."
+              : "🔍 Gathering recent feedback for analysis...",
           },
         ]);
 
         try {
+          // Optionally, you could page through feedbacks if your ingestFeedback supports it
+          // For now, just re-ingest and analyze a new set
           const feedbacks = await ingestFeedback();
+          this.lastFeedbacks = feedbacks;
+          this.lastFeedbackIndex = 0;
           const insights = [];
 
-         
           await context.sendActivity(
             `🧠 Analyzing ${feedbacks.length} feedback entries...`
           );
@@ -161,7 +173,7 @@ class LocalBot extends ActivityHandler {
             progressActivityId = await sendProgressBar(
               adapter,
               progressConversationReference,
-              progressActivityId, 
+              progressActivityId,
               i + 1,
               feedbacks.length
             );
@@ -177,7 +189,7 @@ class LocalBot extends ActivityHandler {
           }
 
           console.log("Extracted insights:", insights);
-          
+
           if (insights.length === 0) {
             await context.sendActivity(
               "😞 Sorry, I couldn't extract any insights this time."
@@ -195,8 +207,57 @@ class LocalBot extends ActivityHandler {
           );
         }
       }
-      
-      else if (this.insights.length > 0) {
+      // Statistical queries
+      else if (this.insights.length > 0 && (
+        userText.includes("how many") ||
+        userText.includes("what percent") ||
+        userText.includes("average attempts") ||
+        userText.includes("show stats") ||
+        userText.includes("statistics")
+      )) {
+        const total = this.insights.length;
+        const sentiments = ["positive", "neutral", "negative"];
+        let reply = "";
+
+        // Sentiment counts and percentages
+        sentiments.forEach((sentiment) => {
+          const count = this.insights.filter(
+            (i) => i.sentiment.toLowerCase() === sentiment
+          ).length;
+          const percent = ((count / total) * 100).toFixed(1);
+          reply += `\n${sentiment.charAt(0).toUpperCase() + sentiment.slice(1)}: ${count} (${percent}%)`;
+        });
+
+        // Average attempts per sentiment
+        sentiments.forEach((sentiment) => {
+          const filtered = this.insights.filter(
+            (i) => i.sentiment.toLowerCase() === sentiment
+          );
+          if (filtered.length > 0) {
+            const avgAttempts = (
+              filtered.reduce((sum, i) => sum + (i.attempts || 1), 0) /
+              filtered.length
+            ).toFixed(2);
+            reply += `\nAvg attempts for ${sentiment}: ${avgAttempts}`;
+          }
+        });
+
+        // Feature area stats
+        const featureAreas = {};
+        this.insights.forEach((i) => {
+          if (i.featureArea) {
+            featureAreas[i.featureArea] = (featureAreas[i.featureArea] || 0) + 1;
+          }
+        });
+        if (Object.keys(featureAreas).length > 0) {
+          reply += "\n\nFeature Area Distribution:";
+          Object.entries(featureAreas).forEach(([area, count]) => {
+            reply += `\n- ${area}: ${count} (${((count / total) * 100).toFixed(1)}%)`;
+          });
+        }
+
+        await context.sendActivity("📊 Analysis statistics:" + reply);
+      } else if (this.insights.length > 0) {
         const total = this.insights.length;
         const sentimentMatch = /(positive|neutral|negative)/.exec(userText);
 
