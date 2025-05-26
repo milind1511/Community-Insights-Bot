@@ -310,7 +310,7 @@ class LocalBot extends ActivityHandler {
           );
         } else {
           await context.sendActivity(
-            "❓ You can ask things like:\n- 'What percent is neutral?'\n- 'Show me positive feedback'\n- 'List all feedback'"
+            "❓ You can ask things like:\n- 'What percent is neutral?'\n- 'Show me positive feedback'\n- 'List all feedback'\n- 'Show stats'"
           );
         }
       } else {

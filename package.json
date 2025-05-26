@@ -4,7 +4,8 @@
   "description": "Teams app to extract developer pain points from community forums using AI",
   "main": "bot/app.js",
   "scripts": {
-    "start": "node bot/app.js"
+    "start": "node bot/app.js",
+    "dev": "nodemon bot/app.js"
   },
   "keywords": [
     "teams",
