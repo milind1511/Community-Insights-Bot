@@ -21,11 +21,13 @@ This bot is designed to help product managers and developers quickly understand 
 .
 ├── ingestion/
 │   └── mcpServer.js        # Simulated ingestion of feedback
+|   └── mcpClient.js        
 ├── ai/
 │   └── extractor.js        # LLM interaction via AzureOpenAI
-├── cards/
+├── bot/
 │   └── adaptiveCard.js     # Adaptive Card generator
-├── index.js                # Express server and bot handler
+|   └── app.js
+|   └── localBot.js
 ├── .env                    # Environment variables
 ├── package.json
 └── README.md
