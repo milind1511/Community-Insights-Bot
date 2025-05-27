@@ -88,6 +88,7 @@ After insights are stored in memory, users can ask:
 | `MICROSOFT_APP_PASSWORD` | Azure Bot Password                   |
 | `API_KEY`                | AzureOpenAI API Key (for LLM queries)|
 | `PORT`                   | Optional. Defaults to `3000`         |
+| `GITHUB_TOKEN`           | Github PAT                           |
 
 ## 🚀 Getting Started
 
@@ -117,6 +118,7 @@ MICROSOFT_APP_ID=your-bot-app-id
 MICROSOFT_APP_PASSWORD=your-bot-password
 API_KEY=your-AzureOpenAI-api-key
 PORT=80
+GITHUB_TOKEN=you-github-pat
 ```
 
 You can get the `MICROSOFT_APP_ID` and `MICROSOFT_APP_PASSWORD` by registering your bot in the Azure portal. The `API_KEY` can be obtained from [AzureOpenAI](https://ai.azure.com/). The `PORT` is the port on which your bot will run. You can change it if needed but make sure to update the bot's messaging endpoint accordingly.
